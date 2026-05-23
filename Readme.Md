@@ -394,7 +394,7 @@ X-Cache-Hit: true
 | `422` | Invalid request body (missing fields, bad values) | Field-level validation message |
 | `500` | Payment processing failure or timeout | Error detail |
 
----
+
 
 ### `GET /audit`
 
@@ -416,13 +416,13 @@ Returns all recorded gateway events, most recent first.
 ]
 ```
 
----
+
 
 ### `GET /audit/{key}`
 
 Returns all events for a specific idempotency key.
 
----
+
 
 ### `GET /audit/stats`
 
@@ -439,7 +439,7 @@ Returns event counts grouped by type — powers a monitoring dashboard.
 }
 ```
 
----
+
 
 ## 9. curl Examples
 
@@ -465,7 +465,7 @@ Expected response (after ~2 seconds):
 }
 ```
 
----
+
 
 ### User Story 2 — Duplicate Request (instant cache hit)
 
@@ -488,7 +488,7 @@ Expected (returns immediately — no 2-second delay):
 }
 ```
 
----
+
 
 ### User Story 3 — Same Key, Different Payload (conflict)
 
@@ -511,7 +511,7 @@ Expected:
 }
 ```
 
----
+
 
 ### Missing Header
 
@@ -531,7 +531,7 @@ Expected:
 }
 ```
 
----
+
 
 ### View Audit Trail
 
@@ -546,7 +546,7 @@ curl http://localhost:8080/api/v1/audit/pay-order-001
 curl http://localhost:8080/api/v1/audit/stats
 ```
 
----
+
 
 ## 10. Design Decisions
 
@@ -579,7 +579,7 @@ Every service is defined as an interface (`PaymentService`, `IdempotencyService`
 
 Without TTL, the `ConcurrentHashMap` grows indefinitely. After 30 minutes (configurable), idempotency records are evicted by a `@Scheduled` background task. This means a client who retries after 30 minutes gets a fresh processing — reasonable for payment systems where retries happen within seconds or minutes of the original request.
 
----
+
 
 ## 11. Concurrency Handling
 
@@ -607,7 +607,7 @@ The losing thread does not busy-wait or poll. `CompletableFuture.get()` is a blo
 
 `synchronized(key)` would require locking on the String object, which is error-prone (String interning, different instances). It also holds the lock for the entire 2-second processing duration, blocking all other concurrent requests to different keys in the same `synchronized` block. The `CompletableFuture` approach only "waits" per key, not globally.
 
----
+
 
 ## 12. Developer's Choice — Audit Logging
 
@@ -651,7 +651,7 @@ And immediately sees the full event timeline: when the first request arrived, wh
 
 The current implementation is in-memory. Replacing `AuditServiceImpl` with a JPA repository backed by PostgreSQL requires only swapping the bean — no changes to `IdempotencyServiceImpl` or the controller, because the `AuditService` interface decouples the consumers from the storage mechanism.
 
----
+
 
 ## 13. Future Improvements
 
@@ -666,10 +666,5 @@ The current implementation is in-memory. Replacing `AuditServiceImpl` with a JPA
 | **Metrics dashboard** | Expose Micrometer counters (cache hit rate, conflict rate) to Prometheus + Grafana |
 | **Retry-After header** | When a key is still PROCESSING, return `Retry-After: <seconds>` so clients know when to retry |
 
----
 
-## Author
 
-**Esther Uwamwezi**
-IgirePay Technologies Ltd. — Backend Engineering Assessment
-Built with Java 17 + Spring Boot 3.2.5
