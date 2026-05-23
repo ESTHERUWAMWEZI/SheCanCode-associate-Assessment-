@@ -15,8 +15,8 @@ igirepay:
     # How long (in minutes) an idempotency record is kept before being evicted.
     # After TTL, a new request with the same key is treated as fresh.
     ttl-minutes: 30
-    # How often (in seconds) the background eviction task runs.
-    eviction-interval-seconds: 60
+    # How often (in milliseconds) the background eviction task runs.
+    eviction-interval-ms: 60000
 
   payment:
     # Simulated processing delay in milliseconds (represents real downstream call latency)
