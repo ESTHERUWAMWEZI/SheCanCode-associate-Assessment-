@@ -1,47 +1,59 @@
 package rw.igirepay.gateway.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
-/**
- * Outbound payment response — returned for both first-time processing
- * and cached duplicate retries.
- *
- * Storing httpStatusCode inside the record lets the gateway replay the
- * exact original HTTP status on cache hits (e.g. 200, 201) rather than
- * always defaulting to 200.
- */
-@Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class PaymentResponse {
 
-    @JsonProperty("message")
     private String message;
-
-    @JsonProperty("transactionId")
     private String transactionId;
-
-    @JsonProperty("idempotencyKey")
     private String idempotencyKey;
-
-    @JsonProperty("status")
     private String status;
-
-    @JsonProperty("amount")
     private String amount;
-
-    @JsonProperty("currency")
     private String currency;
-
-    @JsonProperty("processedAt")
     private LocalDateTime processedAt;
+
+    private PaymentResponse() {}
+
+    public String getMessage() { return message; }
+    public String getTransactionId() { return transactionId; }
+    public String getIdempotencyKey() { return idempotencyKey; }
+    public String getStatus() { return status; }
+    public String getAmount() { return amount; }
+    public String getCurrency() { return currency; }
+    public LocalDateTime getProcessedAt() { return processedAt; }
+
+    public static Builder builder() { return new Builder(); }
+
+    public static class Builder {
+        private String message;
+        private String transactionId;
+        private String idempotencyKey;
+        private String status;
+        private String amount;
+        private String currency;
+        private LocalDateTime processedAt;
+
+        public Builder message(String message) { this.message = message; return this; }
+        public Builder transactionId(String transactionId) { this.transactionId = transactionId; return this; }
+        public Builder idempotencyKey(String idempotencyKey) { this.idempotencyKey = idempotencyKey; return this; }
+        public Builder status(String status) { this.status = status; return this; }
+        public Builder amount(String amount) { this.amount = amount; return this; }
+        public Builder currency(String currency) { this.currency = currency; return this; }
+        public Builder processedAt(LocalDateTime processedAt) { this.processedAt = processedAt; return this; }
+
+        public PaymentResponse build() {
+            PaymentResponse r = new PaymentResponse();
+            r.message = this.message;
+            r.transactionId = this.transactionId;
+            r.idempotencyKey = this.idempotencyKey;
+            r.status = this.status;
+            r.amount = this.amount;
+            r.currency = this.currency;
+            r.processedAt = this.processedAt;
+            return r;
+        }
+    }
 }

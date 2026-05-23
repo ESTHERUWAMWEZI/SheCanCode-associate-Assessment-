@@ -1,23 +1,18 @@
 package rw.igirepay.gateway.dto;
 
-import lombok.Value;
-
-/**
- * Internal result returned by the idempotency service to the controller.
- *
- * Keeping cacheHit and httpStatusCode here — rather than embedding them in
- * PaymentResponse — preserves the separation between the API contract (what
- * the client sees) and the gateway's internal routing decisions (what the
- * controller uses to set headers and status codes).
- */
-@Value
 public class IdempotencyResult {
 
-    PaymentResponse response;
+    private final PaymentResponse response;
+    private final boolean cacheHit;
+    private final int httpStatusCode;
 
-    /** True when the response was served from the idempotency cache. */
-    boolean cacheHit;
+    public IdempotencyResult(PaymentResponse response, boolean cacheHit, int httpStatusCode) {
+        this.response = response;
+        this.cacheHit = cacheHit;
+        this.httpStatusCode = httpStatusCode;
+    }
 
-    /** The original HTTP status code to replay on cache hits. */
-    int httpStatusCode;
+    public PaymentResponse getResponse() { return response; }
+    public boolean isCacheHit() { return cacheHit; }
+    public int getHttpStatusCode() { return httpStatusCode; }
 }

@@ -1,42 +1,59 @@
 package rw.igirepay.gateway.model;
 
-import lombok.Builder;
-import lombok.Data;
-
 import java.time.LocalDateTime;
 
-/**
- * Immutable record of a single gateway event.
- *
- * Each field maps to something an auditor, support engineer, or compliance
- * officer would need: who made the request (key), what they sent (amount/currency),
- * what happened (eventType), and when (timestamp).
- */
-@Data
-@Builder
 public class AuditEvent {
 
-    /** Auto-generated unique ID for this event. */
     private final String eventId;
-
-    /** The idempotency key supplied by the client (may be null for MISSING_KEY events). */
     private final String idempotencyKey;
-
-    /** Category of this event — see AuditEventType. */
     private final AuditEventType eventType;
-
-    /** Payment amount from the request body (null if body was absent/malformed). */
     private final String amount;
-
-    /** Payment currency from the request body. */
     private final String currency;
-
-    /** Human-readable description of what happened. */
     private final String description;
-
-    /** SHA-256 hash of the request body used for idempotency comparison. */
     private final String requestBodyHash;
-
-    /** When this event was recorded. */
     private final LocalDateTime timestamp;
+
+    private AuditEvent(Builder builder) {
+        this.eventId = builder.eventId;
+        this.idempotencyKey = builder.idempotencyKey;
+        this.eventType = builder.eventType;
+        this.amount = builder.amount;
+        this.currency = builder.currency;
+        this.description = builder.description;
+        this.requestBodyHash = builder.requestBodyHash;
+        this.timestamp = builder.timestamp;
+    }
+
+    public String getEventId() { return eventId; }
+    public String getIdempotencyKey() { return idempotencyKey; }
+    public AuditEventType getEventType() { return eventType; }
+    public String getAmount() { return amount; }
+    public String getCurrency() { return currency; }
+    public String getDescription() { return description; }
+    public String getRequestBodyHash() { return requestBodyHash; }
+    public LocalDateTime getTimestamp() { return timestamp; }
+
+    public static Builder builder() { return new Builder(); }
+
+    public static class Builder {
+        private String eventId;
+        private String idempotencyKey;
+        private AuditEventType eventType;
+        private String amount;
+        private String currency;
+        private String description;
+        private String requestBodyHash;
+        private LocalDateTime timestamp;
+
+        public Builder eventId(String eventId) { this.eventId = eventId; return this; }
+        public Builder idempotencyKey(String idempotencyKey) { this.idempotencyKey = idempotencyKey; return this; }
+        public Builder eventType(AuditEventType eventType) { this.eventType = eventType; return this; }
+        public Builder amount(String amount) { this.amount = amount; return this; }
+        public Builder currency(String currency) { this.currency = currency; return this; }
+        public Builder description(String description) { this.description = description; return this; }
+        public Builder requestBodyHash(String requestBodyHash) { this.requestBodyHash = requestBodyHash; return this; }
+        public Builder timestamp(LocalDateTime timestamp) { this.timestamp = timestamp; return this; }
+
+        public AuditEvent build() { return new AuditEvent(this); }
+    }
 }
