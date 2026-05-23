@@ -1,0 +1,54 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: igire-idempotency-gateway
+  jackson:
+    default-property-inclusion: non_null
+    serialization:
+      write-dates-as-timestamps: false
+
+# IgirePay custom configuration namespace
+igirepay:
+  idempotency:
+    # How long (in minutes) an idempotency record is kept before being evicted.
+    # After TTL, a new request with the same key is treated as fresh.
+    ttl-minutes: 30
+    # How often (in seconds) the background eviction task runs.
+    eviction-interval-seconds: 60
+
+  payment:
+    # Simulated processing delay in milliseconds (represents real downstream call latency)
+    processing-delay-ms: 2000
+
+  rate-limit:
+    # Maximum number of requests allowed per IP per minute
+    requests-per-minute: 60
+
+# Actuator — expose health and custom metrics endpoints
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: always
+  info:
+    env:
+      enabled: true
+
+info:
+  app:
+    name: IgirePay Idempotency Gateway
+    version: 1.0.0
+    description: Exactly-once payment processing gateway
+    company: IgirePay Technologies Ltd
+
+logging:
+  level:
+    rw.igirepay: DEBUG
+    org.springframework.web: INFO
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
