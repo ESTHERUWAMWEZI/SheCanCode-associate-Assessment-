@@ -10,7 +10,13 @@ import rw.igirepay.gateway.dto.IdempotencyResult;
 import rw.igirepay.gateway.dto.PaymentRequest;
 import rw.igirepay.gateway.dto.PaymentResponse;
 import rw.igirepay.gateway.exception.MissingIdempotencyKeyException;
+import rw.igirepay.gateway.model.AuditEvent;
+import rw.igirepay.gateway.model.AuditEventType;
+import rw.igirepay.gateway.service.AuditService;
 import rw.igirepay.gateway.service.IdempotencyService;
+
+import java.time.LocalDateTime;
+import java.util.UUID;
 
 /**
  * REST entry point for the IgirePay payment gateway.
@@ -29,6 +35,7 @@ public class PaymentController {
     private static final String CACHE_HIT_HEADER       = "X-Cache-Hit";
 
     private final IdempotencyService idempotencyService;
+    private final AuditService auditService;
 
     /**
      * POST /api/v1/process-payment
@@ -50,6 +57,15 @@ public class PaymentController {
             @Valid @RequestBody PaymentRequest request) {
 
         if (idempotencyKey == null || idempotencyKey.isBlank()) {
+            auditService.record(AuditEvent.builder()
+                    .eventId(UUID.randomUUID().toString())
+                    .eventType(AuditEventType.MISSING_IDEMPOTENCY_KEY)
+                    .amount(request.getAmount().toPlainString())
+                    .currency(request.getCurrency())
+                    .description("Request rejected: Idempotency-Key header was absent.")
+                    .timestamp(LocalDateTime.now())
+                    .build());
+
             throw new MissingIdempotencyKeyException(
                     "The '" + IDEMPOTENCY_KEY_HEADER + "' request header is required.");
         }
