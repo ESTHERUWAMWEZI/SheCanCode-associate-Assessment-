@@ -3,7 +3,7 @@
 > **Production-grade "Pay-Once" middleware for IgirePay Technologies Ltd.**
 > Guarantees that every payment request is processed **exactly once**, no matter how many times a client retries.
 
----
+
 
 ## Table of Contents
 
@@ -21,7 +21,7 @@
 12. [Developer's Choice — Audit Logging](#12-developers-choice--audit-logging)
 13. [Future Improvements](#13-future-improvements)
 
----
+
 
 ## 1. Project Overview
 
@@ -45,7 +45,7 @@ This service is an **Idempotency Gateway** — a middleware layer that sits in f
 | Same key + different payload | Reject with 409 Conflict |
 | Two identical requests at the same time | Second request waits; both return the same result |
 
----
+
 
 ## 2. Architecture
 
@@ -87,7 +87,7 @@ Client (e-commerce store)
 └──────────────────────────────────────┘
 ```
 
----
+
 
 ## 3. Sequence Diagram
 
@@ -157,7 +157,7 @@ sequenceDiagram
     GW-->>C: Both A and B return identical 200 OK response
 ```
 
----
+
 
 ## 4. Decision Flowchart
 
@@ -216,7 +216,7 @@ flowchart TD
 
 > **No external database required.** The system runs with a single `java -jar` command.
 
----
+
 
 ## 6. Project Structure
 
@@ -264,7 +264,7 @@ igire-idempotency-gateway/
             └── application.yml                    ← All configuration
 ```
 
----
+
 
 ## 7. Setup & Running
 
